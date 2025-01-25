@@ -1,18 +1,20 @@
 FROM php:8.1-fpm
 
-WORKDIR /var/www
-
+# Instalar dependencias del sistema necesarias
 RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd
+    libsqlite3-dev \
+    libpq-dev \
+    && docker-php-ext-install pdo pdo_mysql pdo_sqlite
 
-RUN docker-php-ext-install pdo pdo_mysql pdo_sqlite
+# Instalar Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Copiar los archivos de la aplicación
+WORKDIR /var/www/html
 COPY . .
 
-RUN composer install
+# Otorgar permisos a las carpetas de Laravel (si es un proyecto Laravel)
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Configurar PHP-FPM
 CMD ["php-fpm"]

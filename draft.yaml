@@ -1,0 +1,62 @@
+models:
+  Team:
+    id: bigIncrements
+    name: string
+    coach: string
+    timestamps: true
+
+  Player:
+    id: bigIncrements
+    name: string
+    age: integer
+    team_id: unsignedBigInteger
+    timestamps: true
+    relationships:
+      team:
+        type: belongsTo
+        model: Team
+
+  Match:
+    id: bigIncrements
+    team1_id: unsignedBigInteger
+    team2_id: unsignedBigInteger
+    match_date: date
+    timestamps: true
+    relationships:
+      team1:
+        type: belongsTo
+        model: Team
+      team2:
+        type: belongsTo
+        model: Team
+
+  Result:
+    id: bigIncrements
+    match_id: unsignedBigInteger
+    team1_score: integer
+    team2_score: integer
+    timestamps: true
+    relationships:
+      match:
+        type: belongsTo
+        model: Match
+
+controllers:
+  TeamController:
+    resource: true
+
+  PlayerController:
+    resource: true
+
+  MatchController:
+    resource: true
+
+  ResultController:
+    resource: true
+
+routes:
+  api:
+    - teams
+    - players
+    - matches
+    - results
